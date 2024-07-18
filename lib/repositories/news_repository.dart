@@ -1,14 +1,21 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
 import '../models/article.dart';
 import '../models/source.dart';
+import 'news_repository_interface.dart';
 
-class NewsRepository {
+@Injectable(as: INewsRepository)
+class NewsRepository implements INewsRepository {
   final String apiKey;
   final String baseUrl;
 
-  NewsRepository({required this.apiKey, this.baseUrl = 'https://newsapi.org/v2'});
+  NewsRepository({
+    @Named('apiKey') required this.apiKey,
+    @Named('baseUrl') required this.baseUrl,
+  });
 
+  @override
   Future<List<Article>> fetchArticles({required String query}) async {
     // count the time it takes to fetch the articles
     // TODO: Remove stopwatch after optimized
@@ -26,6 +33,7 @@ class NewsRepository {
     }
   }
 
+  @override
   Future<List<Source>> fetchSources() async {
     final response = await http.get(Uri.parse('$baseUrl/sources?apiKey=$apiKey'));
 
