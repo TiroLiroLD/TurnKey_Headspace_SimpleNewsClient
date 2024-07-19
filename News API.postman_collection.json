@@ -1,0 +1,538 @@
+{
+	"info": {
+		"_postman_id": "2c0e7f0f-2732-4daf-b39b-1d3de2f5dc7d",
+		"name": "News API",
+		"description": "Collection for News API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22714081"
+	},
+	"item": [
+		{
+			"name": "Fetch Articles",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/everything?q={{query}}&apiKey={{apiKey}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"everything"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "{{query}}"
+						},
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Fetch Articles",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/everything?apiKey={{apiKey}}&q=bitcoin&searchIn=title&pageSize=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"everything"
+							],
+							"query": [
+								{
+									"key": "apiKey",
+									"value": "{{apiKey}}",
+									"description": "REQUIRED"
+								},
+								{
+									"key": "q",
+									"value": "bitcoin",
+									"description": "OPTIONAL - Keywords or phrases to search for in the article title and body.\n\nAdvanced search is supported here:\n\nSurround phrases with quotes (\") for exact match.\nPrepend words or phrases that must appear with a + symbol. Eg: +bitcoin\nPrepend words that must not appear with a - symbol. Eg: -bitcoin\nAlternatively you can use the AND / OR / NOT keywords, and optionally group these with parenthesis. Eg: crypto AND (ethereum OR litecoin) NOT bitcoin.\nThe complete value for q must be URL-encoded. Max length: 500 chars."
+								},
+								{
+									"key": "searchIn",
+									"value": "title",
+									"description": "OPTIONAL - The fields to restrict your q search to.\nThe possible options are:\ntitle\ndescription\ncontent\nMultiple options can be specified by separating them with a comma, for example: title,content.\nThis parameter is useful if you have an edge case where searching all the fields is not giving the desired outcome, but generally you should not need to set this.\nDefault: all fields are searched."
+								},
+								{
+									"key": "sources",
+									"value": null,
+									"description": "OPTIONAL - A comma-seperated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources endpoint to locate these programmatically or look at the sources index.",
+									"disabled": true
+								},
+								{
+									"key": "domains",
+									"value": null,
+									"description": "OPTIONAL - A comma-seperated string of domains (eg bbc.co.uk, techcrunch.com, engadget.com) to restrict the search to.",
+									"disabled": true
+								},
+								{
+									"key": "excludeDomains",
+									"value": null,
+									"description": "OPTIONAL - A comma-seperated string of domains (eg bbc.co.uk, techcrunch.com, engadget.com) to remove from the results.",
+									"disabled": true
+								},
+								{
+									"key": "from",
+									"value": null,
+									"description": "OPTIONAL - A date and optional time for the oldest article allowed. This should be in ISO 8601 format (e.g. 2024-07-19 or 2024-07-19T00:41:18)\n\nDefault: the oldest according to your plan.",
+									"disabled": true
+								},
+								{
+									"key": "to",
+									"value": null,
+									"description": "OPTIONAL - A date and optional time for the newest article allowed. This should be in ISO 8601 format (e.g. 2024-07-19 or 2024-07-19T00:41:18)\n\nDefault: the newest according to your plan.",
+									"disabled": true
+								},
+								{
+									"key": "language",
+									"value": null,
+									"description": "OPTIONAL - ar\nde\nen\nes\nfr\nhe\nit\nnl\nno\npt\nru\nsv\nud\nzh",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": null,
+									"description": "OPTIONAL - The order to sort the articles in. Possible options: relevancy, popularity, publishedAt.\nrelevancy = articles more closely related to q come first.\npopularity = articles from popular sources and publishers come first.\npublishedAt = newest articles come first.\n\nDefault: publishedAt",
+									"disabled": true
+								},
+								{
+									"key": "pageSize",
+									"value": "1",
+									"description": "OPTIONAL - max 100, default 100"
+								},
+								{
+									"key": "page",
+									"value": null,
+									"description": "OPTIONAL - default 1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 19 Jul 2024 01:01:17 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Expires",
+							"value": "-1"
+						},
+						{
+							"key": "X-Cached-Result",
+							"value": "false"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=NZw%2FsAsfyNLRfKwcHz2r0CuUy53%2F6X3pX7ePyfs6p1DLYYSQsLby0x6yr6Jz%2FrSD11lqAKA8XQOEOFgGPBEYaurS2Dj23wLt190tEYZx3GI5%2Foy6l8%2BDF1U%2BhjQh\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "8a56c7847c8c275e-GIG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\",\n    \"totalResults\": 3626,\n    \"articles\": [\n        {\n            \"source\": {\n                \"id\": \"wired\",\n                \"name\": \"Wired\"\n            },\n            \"author\": \"Joel Khalili\",\n            \"title\": \"Craig Wright Faces Perjury Investigation Over Claims He Created Bitcoin\",\n            \"description\": \"By order of a UK judge, Craig Wright can no longer claim he is the creator of bitcoin and now faces the prospect of criminal charges.\",\n            \"url\": \"https://www.wired.com/story/craig-wright-perjury-bitcoin-trial/\",\n            \"urlToImage\": \"https://media.wired.com/photos/6696630a5d2d61e4805c3175/191:100/w_1280,c_limit/GettyImages-1979197796.jpg\",\n            \"publishedAt\": \"2024-07-16T12:58:12Z\",\n            \"content\": \"A judge in the UK High Court has directed prosecutors to consider bringing criminal charges against computer scientist Craig Wright, after ruling that he lied extensively and repeatedly and committed… [+2851 chars]\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Fetch Sources",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/sources?apiKey={{apiKey}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"sources"
+					],
+					"query": [
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Fetch Sources",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/sources?apiKey={{apiKey}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sources"
+							],
+							"query": [
+								{
+									"key": "apiKey",
+									"value": "{{apiKey}}",
+									"description": "REQUIRED"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"description": "OPTIONAL - business\nentertainment\ngeneral\nhealth\nscience\nsports\ntechnology",
+									"disabled": true
+								},
+								{
+									"key": "language",
+									"value": "",
+									"description": "OPTIONAL - ar\nde\nen\nes\nfr\nhe\nit\nnl\nno\npt\nru\nsv\nud\nzh",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "",
+									"description": "OPTIONAL - ae\nar\nat\nau\nbe\nbg\nbr\nca\nch\ncn\nco\ncu\ncz\nde\neg\nfr\ngb\ngr\nhk\nhu\nid\nie\nil\nin\nit\njp\nkr\nlt\nlv\nma\nmx\nmy\nng\nnl\nno\nnz\nph\npl\npt\nro\nrs\nru\nsa\nse\nsg\nsi\nsk\nth\ntr\ntw\nua\nus\nve\nza",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 19 Jul 2024 00:20:59 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Expires",
+							"value": "-1"
+						},
+						{
+							"key": "X-Cached-Result",
+							"value": "false"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=mrqqYm3ORN6euZ05TYBD5%2F3hnZJtTroW%2FlO2TAi%2BaA6qEcTNJnPGhfqSmBP25CDQOevCl4iO9z89UHjqceD8vFYlNuH6vadeWCyO3PPSsqGf9d0K15QazFoS8yOJ\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "8a568c7ef9d37aa0-GIG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\",\n    \"sources\": [\n        {\n            \"id\": \"abc-news-au\",\n            \"name\": \"ABC News (AU)\",\n            \"description\": \"Australia's most trusted source of local, national and world news. Comprehensive, independent, in-depth analysis, the latest business, sport, weather and more.\",\n            \"url\": \"https://www.abc.net.au/news\",\n            \"category\": \"general\",\n            \"language\": \"en\",\n            \"country\": \"au\"\n        },\n        {\n            \"id\": \"australian-financial-review\",\n            \"name\": \"Australian Financial Review\",\n            \"description\": \"The Australian Financial Review reports the latest news from business, finance, investment and politics, updated in real time. It has a reputation for independent, award-winning journalism and is essential reading for the business and investor community.\",\n            \"url\": \"http://www.afr.com\",\n            \"category\": \"business\",\n            \"language\": \"en\",\n            \"country\": \"au\"\n        },\n        {\n            \"id\": \"google-news-au\",\n            \"name\": \"Google News (Australia)\",\n            \"description\": \"Comprehensive, up-to-date Australia news coverage, aggregated from sources all over the world by Google News.\",\n            \"url\": \"https://news.google.com\",\n            \"category\": \"general\",\n            \"language\": \"en\",\n            \"country\": \"au\"\n        },\n        {\n            \"id\": \"news-com-au\",\n            \"name\": \"News.com.au\",\n            \"description\": \"We say what people are thinking and cover the issues that get people talking balancing Australian and global moments — from politics to pop culture.\",\n            \"url\": \"http://www.news.com.au\",\n            \"category\": \"general\",\n            \"language\": \"en\",\n            \"country\": \"au\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Fetch Top Headlines",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/top-headlines?apiKey={{apiKey}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"top-headlines"
+					],
+					"query": [
+						{
+							"key": "apiKey",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Fetch Top Headlines",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/top-headlines?apiKey={{apiKey}}&country=us&pageSize=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"top-headlines"
+							],
+							"query": [
+								{
+									"key": "apiKey",
+									"value": "{{apiKey}}",
+									"description": "REQUIRED"
+								},
+								{
+									"key": "country",
+									"value": "us",
+									"description": "OPTIONAL - ae\nar\nat\nau\nbe\nbg\nbr\nca\nch\ncn\nco\ncu\ncz\nde\neg\nfr\ngb\ngr\nhk\nhu\nid\nie\nil\nin\nit\njp\nkr\nlt\nlv\nma\nmx\nmy\nng\nnl\nno\nnz\nph\npl\npt\nro\nrs\nru\nsa\nse\nsg\nsi\nsk\nth\ntr\ntw\nua\nus\nve\nza"
+								},
+								{
+									"key": "category",
+									"value": "business",
+									"description": "OPTIONAL - business\nentertainment\ngeneral\nhealth\nscience\nsports\ntechnology",
+									"disabled": true
+								},
+								{
+									"key": "sources",
+									"value": "google-news,bbc-news,bloomberg",
+									"description": "OPTIONAL - A comma-seperated string of identifiers for the news sources or blogs you want headlines from. Use the /top-headlines/sources endpoint to locate these programmatically or look at the sources index. Note: you can't mix this param with the country or category params.",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "stock",
+									"description": "OPTIONAL",
+									"disabled": true
+								},
+								{
+									"key": "pageSize",
+									"value": "1",
+									"description": "OPTIONAL - The number of results to return per page (request). 20 is the default, 100 is the maximum."
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "OPTIONAL - Use this to page through the results if the total results found is greater than the page size.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 19 Jul 2024 00:59:54 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Expires",
+							"value": "-1"
+						},
+						{
+							"key": "X-Cached-Result",
+							"value": "false"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=s2yv8EzU%2FahQal2xaxBo55th0rUPpBdGt74kFXxaI4BW1JgLP8igc%2BGJJdgp6yaZeh%2FRugzUkYx38mV0e82PhbkAC55pmc6DFTRuHhnhGR%2B7Q04OE%2Bk2TPMZmJbe\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "8a56c57fca7d275e-GIG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\",\n    \"totalResults\": 37,\n    \"articles\": [\n        {\n            \"source\": {\n                \"id\": \"google-news\",\n                \"name\": \"Google News\"\n            },\n            \"author\": \"BBC.com\",\n            \"title\": \"Peru: Uncontacted indigenous people sighted near river - BBC.com\",\n            \"description\": null,\n            \"url\": \"https://news.google.com/rss/articles/CBMiLGh0dHBzOi8vd3d3LmJiYy5jb20vbmV3cy92aWRlb3MvY3pyajBuZXlrNGtv0gEA?oc=5\",\n            \"urlToImage\": null,\n            \"publishedAt\": \"2024-07-17T23:42:20Z\",\n            \"content\": null\n        }\n    ]\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://newsapi.org/v2"
+		},
+		{
+			"key": "apiKey",
+			"value": "hidden"
+		},
+		{
+			"key": "query",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "category",
+			"value": "",
+			"disabled": true
+		}
+	]
+}
