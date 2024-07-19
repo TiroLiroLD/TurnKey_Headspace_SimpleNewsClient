@@ -71,125 +71,142 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('News Search'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Query'),
-                  onChanged: (value) {
-                    setState(() {
-                      query = value;
-                    });
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Include Words'),
-                  onChanged: (value) {
-                    setState(() {
-                      includeWords = value;
-                    });
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Exclude Words'),
-                  onChanged: (value) {
-                    setState(() {
-                      excludeWords = value;
-                    });
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'From Date (YYYY-MM-DD)'),
-                  onChanged: (value) {
-                    setState(() {
-                      fromDate = value;
-                    });
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'To Date (YYYY-MM-DD)'),
-                  onChanged: (value) {
-                    setState(() {
-                      toDate = value;
-                    });
-                  },
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: 'Language'),
-                  value: language,
-                  items: [
-                    DropdownMenuItem(value: 'ar', child: Text('Arabic')),
-                    DropdownMenuItem(value: 'de', child: Text('German')),
-                    DropdownMenuItem(value: 'en', child: Text('English')),
-                    DropdownMenuItem(value: 'es', child: Text('Spanish')),
-                    DropdownMenuItem(value: 'fr', child: Text('French')),
-                    DropdownMenuItem(value: 'he', child: Text('Hebrew')),
-                    DropdownMenuItem(value: 'it', child: Text('Italian')),
-                    DropdownMenuItem(value: 'nl', child: Text('Dutch')),
-                    DropdownMenuItem(value: 'no', child: Text('Norwegian')),
-                    DropdownMenuItem(value: 'pt', child: Text('Portuguese')),
-                    DropdownMenuItem(value: 'ru', child: Text('Russian')),
-                    DropdownMenuItem(value: 'sv', child: Text('Swedish')),
-                    DropdownMenuItem(value: 'ud', child: Text('Urdu')),
-                    DropdownMenuItem(value: 'zh', child: Text('Chinese')),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      language = value!;
-                    });
-                  },
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: 'Sort By'),
-                  value: sortBy,
-                  items: [
-                    DropdownMenuItem(value: 'relevancy', child: Text('Relevancy')),
-                    DropdownMenuItem(value: 'popularity', child: Text('Popularity')),
-                    DropdownMenuItem(value: 'publishedAt', child: Text('Published At')),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      sortBy = value!;
-                    });
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Page Size'),
-                  initialValue: pageSize,
-                  onChanged: (value) {
-                    setState(() {
-                      pageSize = value;
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: fetchArticles,
-                  child: Text('Search'),
-                ),
-                SizedBox(height: 20),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: articles.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(articles[index].title),
-                            subtitle: Text(articles[index].description ?? ''),
-                          );
-                        },
+        actions: [
+          IconButton(
+            icon: Icon(Icons.filter_list),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'Query'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      query = value;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'Include Words'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      includeWords = value;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'Exclude Words'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      excludeWords = value;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'From Date (YYYY-MM-DD)'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      fromDate = value;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'To Date (YYYY-MM-DD)'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      toDate = value;
+                                    });
+                                  },
+                                ),
+                                DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(labelText: 'Language'),
+                                  value: language,
+                                  items: [
+                                    DropdownMenuItem(value: 'ar', child: Text('Arabic')),
+                                    DropdownMenuItem(value: 'de', child: Text('German')),
+                                    DropdownMenuItem(value: 'en', child: Text('English')),
+                                    DropdownMenuItem(value: 'es', child: Text('Spanish')),
+                                    DropdownMenuItem(value: 'fr', child: Text('French')),
+                                    DropdownMenuItem(value: 'he', child: Text('Hebrew')),
+                                    DropdownMenuItem(value: 'it', child: Text('Italian')),
+                                    DropdownMenuItem(value: 'nl', child: Text('Dutch')),
+                                    DropdownMenuItem(value: 'no', child: Text('Norwegian')),
+                                    DropdownMenuItem(value: 'pt', child: Text('Portuguese')),
+                                    DropdownMenuItem(value: 'ru', child: Text('Russian')),
+                                    DropdownMenuItem(value: 'sv', child: Text('Swedish')),
+                                    DropdownMenuItem(value: 'ud', child: Text('Urdu')),
+                                    DropdownMenuItem(value: 'zh', child: Text('Chinese')),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      language = value!;
+                                    });
+                                  },
+                                ),
+                                DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(labelText: 'Sort By'),
+                                  value: sortBy,
+                                  items: [
+                                    DropdownMenuItem(value: 'relevancy', child: Text('Relevancy')),
+                                    DropdownMenuItem(value: 'popularity', child: Text('Popularity')),
+                                    DropdownMenuItem(value: 'publishedAt', child: Text('Published At')),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      sortBy = value!;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: InputDecoration(labelText: 'Page Size'),
+                                  initialValue: pageSize,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      pageSize = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              fetchArticles();
+                            },
+                            child: Text('Apply Filters'),
+                          ),
+                        ],
                       ),
-              ],
-            ),
-          ),
-        ),
+                    ),
+                  );
+                },
+              );
+            },
+          )
+        ],
       ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(articles[index].title),
+                  subtitle: Text(articles[index].description ?? ''),
+                );
+              },
+            ),
     );
   }
 }
