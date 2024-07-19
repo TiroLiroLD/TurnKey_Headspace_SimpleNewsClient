@@ -11,9 +11,9 @@ class NewsService implements INewsService {
   NewsService({required this.newsRepository});
 
   @override
-  Future<List<Article>> getArticles(String query) async {
+  Future<List<Article>> getArticles({required Map<String, String> parameters}) async {
     try {
-      return await newsRepository.fetchArticles(query: query);
+      return await newsRepository.fetchArticles(parameters: parameters);
     } catch (e) {
       rethrow;
     }

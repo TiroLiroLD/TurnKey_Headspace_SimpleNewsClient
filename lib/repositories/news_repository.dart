@@ -16,12 +16,16 @@ class NewsRepository implements INewsRepository {
   });
 
   @override
-  Future<List<Article>> fetchArticles({required String query}) async {
+  Future<List<Article>> fetchArticles({required Map<String, String> parameters}) async {
     // count the time it takes to fetch the articles
     // TODO: Remove stopwatch after optimized
     final stopwatch = Stopwatch()..start();
-    print(Uri.parse('$baseUrl/everything?q=$query&apiKey=$apiKey'));
-    final response = await http.get(Uri.parse('$baseUrl/everything?q=$query&apiKey=$apiKey'));
+
+    parameters['apiKey'] = apiKey;
+    final uri = Uri.parse('$baseUrl/everything').replace(queryParameters: parameters);
+    print(uri);
+
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
@@ -35,7 +39,9 @@ class NewsRepository implements INewsRepository {
 
   @override
   Future<List<Source>> fetchSources() async {
-    final response = await http.get(Uri.parse('$baseUrl/sources?apiKey=$apiKey'));
+    final uri = Uri.parse('$baseUrl/sources').replace(queryParameters: {'apiKey': apiKey});
+
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
