@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+
+import '../helpers/database_helper.dart';
 import '../models/article.dart';
 import '../services/news_service_interface.dart';
 
@@ -11,6 +13,7 @@ class NewsSearchPage extends StatefulWidget {
 class _NewsSearchPageState extends State<NewsSearchPage> {
   late INewsService newsService;
   List<Article> articles = [];
+  List<Article> savedArticles = [];
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -28,6 +31,12 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
   void initState() {
     super.initState();
     newsService = GetIt.instance<INewsService>();
+    fetchArticles();
+    fetchSavedArticles();
+  }
+
+  Future<void> fetchSavedArticles() async {
+    savedArticles = await DatabaseHelper.instance.fetchSavedArticles();
   }
 
   Future<void> fetchArticles() async {
@@ -39,8 +48,10 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
 
     // Combining query parameters
     String combinedQuery = query;
-    if (includeWords.isNotEmpty) combinedQuery += ' +${includeWords.replaceAll(' ', ' +')}';
-    if (excludeWords.isNotEmpty) combinedQuery += ' -${excludeWords.replaceAll(' ', ' -')}';
+    if (includeWords.isNotEmpty)
+      combinedQuery += ' +${includeWords.replaceAll(' ', ' +')}';
+    if (excludeWords.isNotEmpty)
+      combinedQuery += ' -${excludeWords.replaceAll(' ', ' -')}';
 
     final parameters = <String, String>{
       if (combinedQuery.isNotEmpty) 'q': combinedQuery,
@@ -52,7 +63,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
     };
 
     try {
-      List<Article> fetchedArticles = await newsService.getArticles(parameters: parameters);
+      List<Article> fetchedArticles =
+          await newsService.getArticles(parameters: parameters);
       setState(() {
         articles = fetchedArticles;
         isLoading = false;
@@ -66,20 +78,61 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
     }
   }
 
+  Future<void> toggleSaveArticle(Article article) async {
+    if (isArticleSaved(article)) {
+      await removeArticle(article);
+    } else {
+      await saveArticle(article);
+    }
+  }
+
+  Future<void> saveArticle(Article article) async {
+    try {
+      await DatabaseHelper.instance.insertArticle(article);
+      setState(() {
+        savedArticles.add(article);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Article saved: ${article.title}')),
+      );
+    } catch (e) {
+      print('Error saving article: $e');
+    }
+  }
+
+  Future<void> removeArticle(Article article) async {
+    try {
+      await DatabaseHelper.instance.deleteArticle(article.url);
+      setState(() {
+        savedArticles
+            .removeWhere((savedArticle) => savedArticle.url == article.url);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Article removed: ${article.title}')),
+      );
+    } catch (e) {
+      print('Error removing article: $e');
+    }
+  }
+
+  bool isArticleSaved(Article article) {
+    return savedArticles.any((savedArticle) => savedArticle.url == article.url);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('News Search'),
+        title: const Text('News Search'),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
                 builder: (BuildContext context) {
                   return Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
@@ -88,7 +141,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                             child: Column(
                               children: [
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'Query'),
+                                  decoration:
+                                      const InputDecoration(labelText: 'Query'),
                                   onChanged: (value) {
                                     setState(() {
                                       query = value;
@@ -96,7 +150,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'Include Words'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Include Words'),
                                   onChanged: (value) {
                                     setState(() {
                                       includeWords = value;
@@ -104,7 +159,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'Exclude Words'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Exclude Words'),
                                   onChanged: (value) {
                                     setState(() {
                                       excludeWords = value;
@@ -112,7 +168,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'From Date (YYYY-MM-DD)'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'From Date (YYYY-MM-DD)'),
                                   onChanged: (value) {
                                     setState(() {
                                       fromDate = value;
@@ -120,7 +177,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'To Date (YYYY-MM-DD)'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'To Date (YYYY-MM-DD)'),
                                   onChanged: (value) {
                                     setState(() {
                                       toDate = value;
@@ -128,23 +186,38 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(labelText: 'Language'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Language'),
                                   value: language,
                                   items: [
-                                    DropdownMenuItem(value: 'ar', child: Text('Arabic')),
-                                    DropdownMenuItem(value: 'de', child: Text('German')),
-                                    DropdownMenuItem(value: 'en', child: Text('English')),
-                                    DropdownMenuItem(value: 'es', child: Text('Spanish')),
-                                    DropdownMenuItem(value: 'fr', child: Text('French')),
-                                    DropdownMenuItem(value: 'he', child: Text('Hebrew')),
-                                    DropdownMenuItem(value: 'it', child: Text('Italian')),
-                                    DropdownMenuItem(value: 'nl', child: Text('Dutch')),
-                                    DropdownMenuItem(value: 'no', child: Text('Norwegian')),
-                                    DropdownMenuItem(value: 'pt', child: Text('Portuguese')),
-                                    DropdownMenuItem(value: 'ru', child: Text('Russian')),
-                                    DropdownMenuItem(value: 'sv', child: Text('Swedish')),
-                                    DropdownMenuItem(value: 'ud', child: Text('Urdu')),
-                                    DropdownMenuItem(value: 'zh', child: Text('Chinese')),
+                                    const DropdownMenuItem(
+                                        value: 'ar', child: Text('Arabic')),
+                                    const DropdownMenuItem(
+                                        value: 'de', child: Text('German')),
+                                    const DropdownMenuItem(
+                                        value: 'en', child: Text('English')),
+                                    const DropdownMenuItem(
+                                        value: 'es', child: Text('Spanish')),
+                                    const DropdownMenuItem(
+                                        value: 'fr', child: Text('French')),
+                                    const DropdownMenuItem(
+                                        value: 'he', child: Text('Hebrew')),
+                                    const DropdownMenuItem(
+                                        value: 'it', child: Text('Italian')),
+                                    const DropdownMenuItem(
+                                        value: 'nl', child: Text('Dutch')),
+                                    const DropdownMenuItem(
+                                        value: 'no', child: Text('Norwegian')),
+                                    const DropdownMenuItem(
+                                        value: 'pt', child: Text('Portuguese')),
+                                    const DropdownMenuItem(
+                                        value: 'ru', child: Text('Russian')),
+                                    const DropdownMenuItem(
+                                        value: 'sv', child: Text('Swedish')),
+                                    const DropdownMenuItem(
+                                        value: 'ud', child: Text('Urdu')),
+                                    const DropdownMenuItem(
+                                        value: 'zh', child: Text('Chinese')),
                                   ],
                                   onChanged: (value) {
                                     setState(() {
@@ -153,12 +226,19 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(labelText: 'Sort By'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Sort By'),
                                   value: sortBy,
                                   items: [
-                                    DropdownMenuItem(value: 'relevancy', child: Text('Relevancy')),
-                                    DropdownMenuItem(value: 'popularity', child: Text('Popularity')),
-                                    DropdownMenuItem(value: 'publishedAt', child: Text('Published At')),
+                                    const DropdownMenuItem(
+                                        value: 'relevancy',
+                                        child: Text('Relevancy')),
+                                    const DropdownMenuItem(
+                                        value: 'popularity',
+                                        child: Text('Popularity')),
+                                    const DropdownMenuItem(
+                                        value: 'publishedAt',
+                                        child: Text('Published At')),
                                   ],
                                   onChanged: (value) {
                                     setState(() {
@@ -167,7 +247,8 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  decoration: InputDecoration(labelText: 'Page Size'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Page Size'),
                                   initialValue: pageSize,
                                   onChanged: (value) {
                                     setState(() {
@@ -178,13 +259,13 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pop(context);
                               fetchArticles();
                             },
-                            child: Text('Apply Filters'),
+                            child: const Text('Apply Filters'),
                           ),
                         ],
                       ),
@@ -197,13 +278,24 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: articles.length,
               itemBuilder: (context, index) {
+                final article = articles[index];
+                final isSaved = isArticleSaved(article);
                 return ListTile(
-                  title: Text(articles[index].title),
-                  subtitle: Text(articles[index].description ?? ''),
+                  title: Text(article.title ?? 'No Title'),
+                  subtitle: Text(article.description ?? ''),
+                  trailing: IconButton(
+                    icon: Icon(
+                      isSaved ? Icons.bookmark : Icons.bookmark_border,
+                      color: isSaved ? Colors.red : null,
+                    ),
+                    onPressed: () {
+                      toggleSaveArticle(article);
+                    },
+                  ),
                 );
               },
             ),
