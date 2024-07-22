@@ -274,7 +274,13 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                 },
               );
             },
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () {
+              Navigator.pushNamed(context, '/saved-articles');
+            },
+          ),
         ],
       ),
       body: isLoading

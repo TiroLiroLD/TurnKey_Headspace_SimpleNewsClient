@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'pages/news_search_page.dart';
+import 'package:simple_news_client/pages/news_search_page.dart';
+import 'package:simple_news_client/pages/saved_articles_page.dart';
+
 import 'injection.dart';
 import 'services/news_service_interface.dart';
 
@@ -28,6 +30,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: NewsSearchPage(),
+      routes: {
+        '/saved-articles': (context) => SavedArticlesPage(),
+      },
     );
   }
 }
