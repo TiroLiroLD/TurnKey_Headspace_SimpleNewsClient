@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:simple_news_client/widgets/article_item.dart';
 
 import '../helpers/database_helper.dart';
 import '../models/article.dart';
@@ -276,6 +277,12 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
             },
           ),
           IconButton(
+            icon: Icon(Icons.source),
+            onPressed: () {
+              Navigator.pushNamed(context, '/sources');
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.bookmark),
             onPressed: () {
               Navigator.pushNamed(context, '/saved-articles');
@@ -290,18 +297,10 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
               itemBuilder: (context, index) {
                 final article = articles[index];
                 final isSaved = isArticleSaved(article);
-                return ListTile(
-                  title: Text(article.title ?? 'No Title'),
-                  subtitle: Text(article.description ?? ''),
-                  trailing: IconButton(
-                    icon: Icon(
-                      isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color: isSaved ? Colors.red : null,
-                    ),
-                    onPressed: () {
-                      toggleSaveArticle(article);
-                    },
-                  ),
+                return ArticleItem(
+                  article: article,
+                  isSaved: isSaved,
+                  onToggleSave: toggleSaveArticle,
                 );
               },
             ),
