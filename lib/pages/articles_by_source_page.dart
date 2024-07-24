@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+
 import '../models/article.dart';
 import '../models/source.dart';
 import '../services/news_service_interface.dart';
+import '../widgets/article_item.dart';
 
 class ArticlesBySourcePage extends StatefulWidget {
   final Source source;
@@ -35,7 +37,8 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     };
 
     try {
-      List<Article> fetchedArticles = await newsService.getArticles(parameters: parameters);
+      List<Article> fetchedArticles =
+          await newsService.getArticles(parameters: parameters);
       setState(() {
         articles = fetchedArticles;
         isLoading = false;
@@ -56,20 +59,14 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
         title: Text(widget.source.name),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-        itemCount: articles.length,
-        itemBuilder: (context, index) {
-          final article = articles[index];
-          return ListTile(
-            title: Text(article.title ?? ''),
-            subtitle: Text(article.description ?? ''),
-            onTap: () {
-              // Implement article detail navigation if needed
-            },
-          );
-        },
-      ),
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                final article = articles[index];
+                return ArticleItem(article: article);
+              },
+            ),
     );
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:simple_news_client/widgets/article_item.dart';
+import 'package:simple_news_client/widgets/article_list.dart';
 
-import '../helpers/database_helper.dart';
 import '../models/article.dart';
 import '../services/news_service_interface.dart';
 
@@ -14,7 +13,6 @@ class NewsSearchPage extends StatefulWidget {
 class _NewsSearchPageState extends State<NewsSearchPage> {
   late INewsService newsService;
   List<Article> articles = [];
-  List<Article> savedArticles = [];
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -33,11 +31,6 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
     super.initState();
     newsService = GetIt.instance<INewsService>();
     fetchArticles();
-    fetchSavedArticles();
-  }
-
-  Future<void> fetchSavedArticles() async {
-    savedArticles = await DatabaseHelper.instance.fetchSavedArticles();
   }
 
   Future<void> fetchArticles() async {
@@ -77,47 +70,6 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
         isLoading = false;
       });
     }
-  }
-
-  Future<void> toggleSaveArticle(Article article) async {
-    if (isArticleSaved(article)) {
-      await removeArticle(article);
-    } else {
-      await saveArticle(article);
-    }
-  }
-
-  Future<void> saveArticle(Article article) async {
-    try {
-      await DatabaseHelper.instance.insertArticle(article);
-      setState(() {
-        savedArticles.add(article);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Article saved: ${article.title}')),
-      );
-    } catch (e) {
-      print('Error saving article: $e');
-    }
-  }
-
-  Future<void> removeArticle(Article article) async {
-    try {
-      await DatabaseHelper.instance.deleteArticle(article.url);
-      setState(() {
-        savedArticles
-            .removeWhere((savedArticle) => savedArticle.url == article.url);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Article removed: ${article.title}')),
-      );
-    } catch (e) {
-      print('Error removing article: $e');
-    }
-  }
-
-  bool isArticleSaved(Article article) {
-    return savedArticles.any((savedArticle) => savedArticle.url == article.url);
   }
 
   @override
@@ -292,18 +244,7 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: articles.length,
-              itemBuilder: (context, index) {
-                final article = articles[index];
-                final isSaved = isArticleSaved(article);
-                return ArticleItem(
-                  article: article,
-                  isSaved: isSaved,
-                  onToggleSave: toggleSaveArticle,
-                );
-              },
-            ),
+          : ArticleList(articles: articles),
     );
   }
 }
