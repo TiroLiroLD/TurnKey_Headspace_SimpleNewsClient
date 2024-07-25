@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:simple_news_client/pages/article_details_page.dart';
 
 import '../models/article.dart';
 import '../services/news_service_interface.dart';
@@ -43,7 +44,7 @@ class _ArticleItemState extends State<ArticleItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(widget.article.title ?? 'No Title'),
+      title: Text(widget.article.title ?? ''),
       subtitle: Text(widget.article.description ?? ''),
       trailing: IconButton(
         icon: Icon(
@@ -53,7 +54,15 @@ class _ArticleItemState extends State<ArticleItem> {
         onPressed: toggleSaveArticle,
       ),
       onTap: () {
-        // TODO Implement navigation to article details
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleDetailsPage(
+              article: widget.article,
+              toggleSaveArticle: toggleSaveArticle,
+            ),
+          ),
+        );
       },
     );
   }
