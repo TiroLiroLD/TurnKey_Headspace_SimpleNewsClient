@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
-import 'package:simple_news_client/pages/news_search_page.dart';
-import 'package:simple_news_client/pages/saved_articles_page.dart';
-import 'package:simple_news_client/pages/sources_page.dart';
 
 import 'injection.dart';
-import 'services/news_service_interface.dart';
+import 'pages/news_search_page.dart';
+import 'pages/saved_articles_page.dart';
+import 'pages/sources_page.dart';
+import 'services/background_service.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,14 +18,8 @@ Future<void> main() async {
   configureDependencies();
   await GetIt.instance.allReady();
 
-  // Fetch sources on app initialization
-  final newsService = GetIt.instance<INewsService>();
-  final sources = await newsService.getSources();
-  // Print the fetched sources
-  print('Fetched Sources:');
-  for (var source in sources) {
-    print('Source ID: ${source.id}, Name: ${source.name}');
-  }
+  // Start the background service when the app launches
+  await BackgroundService.startService();
 
   runApp(MyApp());
 }
