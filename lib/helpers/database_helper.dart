@@ -1,6 +1,8 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
 import '../models/article.dart';
+import '../models/source.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -27,6 +29,7 @@ class DatabaseHelper {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT';
     const dateType = 'TEXT';
+    const boolType = 'INTEGER';
 
     await db.execute('''
     CREATE TABLE articles (
@@ -36,10 +39,18 @@ class DatabaseHelper {
       author $textType,
       title $textType,
       description $textType,
-      url $textType,
+      url $textType UNIQUE,
       urlToImage $textType,
       publishedAt $dateType,
-      content $textType
+      content $textType,
+      bookmarked $boolType
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE updates (
+      sourceId $textType PRIMARY KEY,
+      lastUpdate $dateType
     )
     ''');
   }
@@ -47,6 +58,25 @@ class DatabaseHelper {
   Future<void> insertArticle(Article article) async {
     final db = await instance.database;
     await db.insert('articles', article.toMap());
+  }
+
+  Future<void> updateArticle(Article article) async {
+    final db = await instance.database;
+    await db.update(
+      'articles',
+      article.toMap(),
+      where: 'url = ?',
+      whereArgs: [article.url],
+    );
+  }
+
+  Future<Article?> getArticleByUrl(String url) async {
+    final db = await instance.database;
+    final result = await db.query('articles', where: 'url = ?', whereArgs: [url]);
+    if (result.isNotEmpty) {
+      return Article.fromMap(result.first);
+    }
+    return null;
   }
 
   Future<void> deleteArticle(String url) async {
@@ -57,7 +87,40 @@ class DatabaseHelper {
   Future<List<Article>> fetchSavedArticles() async {
     final db = await instance.database;
     final result = await db.query('articles');
-    print(result);
     return result.map((json) => Article.fromMap(json)).toList();
+  }
+
+  Future<List<Article>> fetchSavedArticlesOrderedByDate() async {
+    final db = await instance.database;
+    final result = await db.query('articles', orderBy: 'publishedAt DESC');
+    return result.map((json) => Article.fromMap(json)).toList();
+  }
+
+  Future<List<Article>> fetchArticlesBySource(String sourceId) async {
+    final db = await instance.database;
+    final result = await db.query('articles', where: 'sourceId = ?', whereArgs: [sourceId]);
+    return result.map((json) => Article.fromMap(json)).toList();
+  }
+
+  Future<void> setLastUpdateTimestamp(String sourceId, DateTime timestamp) async {
+    final db = await instance.database;
+    await db.insert(
+      'updates',
+      {'sourceId': sourceId, 'lastUpdate': timestamp.toIso8601String()},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<DateTime?> getLastUpdateTimestamp(String sourceId) async {
+    final db = await instance.database;
+    final result = await db.query(
+      'updates',
+      where: 'sourceId = ?',
+      whereArgs: [sourceId],
+    );
+    if (result.isNotEmpty) {
+      return DateTime.parse(result.first['lastUpdate'] as String);
+    }
+    return null;
   }
 }
