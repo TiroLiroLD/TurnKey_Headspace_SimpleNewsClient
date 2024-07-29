@@ -15,6 +15,7 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
   List<Article> articles = [];
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
+  final _searchController = TextEditingController();
 
   String query = '';
   bool exactMatch = false;
@@ -30,12 +31,14 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
   void initState() {
     super.initState();
     newsService = GetIt.instance<INewsService>();
-    fetchArticles();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_searchFocusNode);
+    });
   }
 
-  Future<void> fetchArticles() async {
-    if (!_formKey.currentState!.validate()) return;
+  final FocusNode _searchFocusNode = FocusNode();
 
+  Future<void> fetchArticles() async {
     setState(() {
       isLoading = true;
     });
@@ -72,173 +75,162 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
     }
   }
 
+  void _openAdvancedSearch() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Query'),
+                        onChanged: (value) {
+                          setState(() {
+                            query = value;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'Include Words'),
+                        onChanged: (value) {
+                          setState(() {
+                            includeWords = value;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'Exclude Words'),
+                        onChanged: (value) {
+                          setState(() {
+                            excludeWords = value;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'From Date (YYYY-MM-DD)'),
+                        onChanged: (value) {
+                          setState(() {
+                            fromDate = value;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'To Date (YYYY-MM-DD)'),
+                        onChanged: (value) {
+                          setState(() {
+                            toDate = value;
+                          });
+                        },
+                      ),
+                      DropdownButtonFormField<String>(
+                        decoration:
+                            const InputDecoration(labelText: 'Language'),
+                        value: language,
+                        items: const [
+                          DropdownMenuItem(value: 'ar', child: Text('Arabic')),
+                          DropdownMenuItem(value: 'de', child: Text('German')),
+                          DropdownMenuItem(value: 'en', child: Text('English')),
+                          DropdownMenuItem(value: 'es', child: Text('Spanish')),
+                          DropdownMenuItem(value: 'fr', child: Text('French')),
+                          DropdownMenuItem(value: 'he', child: Text('Hebrew')),
+                          DropdownMenuItem(value: 'it', child: Text('Italian')),
+                          DropdownMenuItem(value: 'nl', child: Text('Dutch')),
+                          DropdownMenuItem(
+                              value: 'no', child: Text('Norwegian')),
+                          DropdownMenuItem(
+                              value: 'pt', child: Text('Portuguese')),
+                          DropdownMenuItem(value: 'ru', child: Text('Russian')),
+                          DropdownMenuItem(value: 'sv', child: Text('Swedish')),
+                          DropdownMenuItem(value: 'ud', child: Text('Urdu')),
+                          DropdownMenuItem(value: 'zh', child: Text('Chinese')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            language = value!;
+                          });
+                        },
+                      ),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(labelText: 'Sort By'),
+                        value: sortBy,
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'relevancy', child: Text('Relevancy')),
+                          DropdownMenuItem(
+                              value: 'popularity', child: Text('Popularity')),
+                          DropdownMenuItem(
+                              value: 'publishedAt',
+                              child: Text('Published At')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            sortBy = value!;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'Page Size'),
+                        initialValue: pageSize,
+                        onChanged: (value) {
+                          setState(() {
+                            pageSize = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    fetchArticles();
+                  },
+                  child: const Text('Apply Filters'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News Search'),
+        title: TextField(
+          focusNode: _searchFocusNode,
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            border: InputBorder.none,
+          ),
+          onChanged: (value) {
+            setState(() {
+              query = value;
+            });
+          },
+          onSubmitted: (value) {
+            fetchArticles();
+          },
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  decoration:
-                                      const InputDecoration(labelText: 'Query'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      query = value;
-                                    });
-                                  },
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Include Words'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      includeWords = value;
-                                    });
-                                  },
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Exclude Words'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      excludeWords = value;
-                                    });
-                                  },
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'From Date (YYYY-MM-DD)'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      fromDate = value;
-                                    });
-                                  },
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'To Date (YYYY-MM-DD)'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      toDate = value;
-                                    });
-                                  },
-                                ),
-                                DropdownButtonFormField<String>(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Language'),
-                                  value: language,
-                                  items: [
-                                    const DropdownMenuItem(
-                                        value: 'ar', child: Text('Arabic')),
-                                    const DropdownMenuItem(
-                                        value: 'de', child: Text('German')),
-                                    const DropdownMenuItem(
-                                        value: 'en', child: Text('English')),
-                                    const DropdownMenuItem(
-                                        value: 'es', child: Text('Spanish')),
-                                    const DropdownMenuItem(
-                                        value: 'fr', child: Text('French')),
-                                    const DropdownMenuItem(
-                                        value: 'he', child: Text('Hebrew')),
-                                    const DropdownMenuItem(
-                                        value: 'it', child: Text('Italian')),
-                                    const DropdownMenuItem(
-                                        value: 'nl', child: Text('Dutch')),
-                                    const DropdownMenuItem(
-                                        value: 'no', child: Text('Norwegian')),
-                                    const DropdownMenuItem(
-                                        value: 'pt', child: Text('Portuguese')),
-                                    const DropdownMenuItem(
-                                        value: 'ru', child: Text('Russian')),
-                                    const DropdownMenuItem(
-                                        value: 'sv', child: Text('Swedish')),
-                                    const DropdownMenuItem(
-                                        value: 'ud', child: Text('Urdu')),
-                                    const DropdownMenuItem(
-                                        value: 'zh', child: Text('Chinese')),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      language = value!;
-                                    });
-                                  },
-                                ),
-                                DropdownButtonFormField<String>(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Sort By'),
-                                  value: sortBy,
-                                  items: [
-                                    const DropdownMenuItem(
-                                        value: 'relevancy',
-                                        child: Text('Relevancy')),
-                                    const DropdownMenuItem(
-                                        value: 'popularity',
-                                        child: Text('Popularity')),
-                                    const DropdownMenuItem(
-                                        value: 'publishedAt',
-                                        child: Text('Published At')),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      sortBy = value!;
-                                    });
-                                  },
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Page Size'),
-                                  initialValue: pageSize,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      pageSize = value;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              fetchArticles();
-                            },
-                            child: const Text('Apply Filters'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.source),
-            onPressed: () {
-              Navigator.pushNamed(context, '/sources');
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.bookmark),
-            onPressed: () {
-              Navigator.pushNamed(context, '/saved-articles');
-            },
+            icon: Icon(Icons.filter_list),
+            onPressed: _openAdvancedSearch,
           ),
         ],
       ),
