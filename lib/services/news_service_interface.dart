@@ -11,4 +11,10 @@ abstract class INewsService {
   Future<void> removeArticle(String url);
 
   Future<bool> isArticleSaved(Article article);
+
+  Future<bool> isArticleBookmarked(Article article);
+
+  Future<void> bookmarkArticle(Article article);
+
+  Future<void> unbookmarkArticle(Article article);
 }

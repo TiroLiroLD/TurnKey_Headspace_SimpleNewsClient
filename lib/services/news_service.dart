@@ -32,6 +32,7 @@ class NewsService implements INewsService {
     }
   }
 
+  @override
   Future<void> saveArticle(Article article) async {
     try {
       await databaseHelper.insertArticle(article);
@@ -40,6 +41,7 @@ class NewsService implements INewsService {
     }
   }
 
+  @override
   Future<void> removeArticle(String url) async {
     try {
       await databaseHelper.deleteArticle(url);
@@ -48,6 +50,7 @@ class NewsService implements INewsService {
     }
   }
 
+  @override
   Future<bool> isArticleSaved(Article article) async {
     try {
       final savedArticles = await databaseHelper.fetchSavedArticles();
@@ -57,4 +60,42 @@ class NewsService implements INewsService {
       rethrow;
     }
   }
+
+  @override
+  Future<bool> isArticleBookmarked(Article article) async {
+    try {
+      final savedArticle = await databaseHelper.getArticleByUrl(article.url);
+      print(savedArticle?.bookmarked ?? false);
+      return savedArticle?.bookmarked ?? false;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> bookmarkArticle(Article article) async {
+    try {
+      final savedArticle = await databaseHelper.getArticleByUrl(article.url);
+      if (savedArticle != null) {
+        final updatedArticle = savedArticle.copyWith(bookmarked: true);
+        await databaseHelper.updateArticle(updatedArticle);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> unbookmarkArticle(Article article) async {
+    try {
+      final savedArticle = await databaseHelper.getArticleByUrl(article.url);
+      if (savedArticle != null) {
+        final updatedArticle = savedArticle.copyWith(bookmarked: false);
+        await databaseHelper.updateArticle(updatedArticle);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }
