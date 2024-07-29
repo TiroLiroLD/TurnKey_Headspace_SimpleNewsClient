@@ -75,7 +75,6 @@ class NewsService implements INewsService {
   Future<bool> isArticleBookmarked(Article article) async {
     try {
       final savedArticle = await databaseHelper.getArticleByUrl(article.url);
-      print(savedArticle?.bookmarked ?? false);
       return savedArticle?.bookmarked ?? false;
     } catch (e) {
       rethrow;
