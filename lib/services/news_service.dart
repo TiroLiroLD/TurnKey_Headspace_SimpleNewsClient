@@ -62,6 +62,16 @@ class NewsService implements INewsService {
   }
 
   @override
+  Future<List<Article>> getBookmarkedArticles() async {
+    try {
+      final savedArticles = await databaseHelper.getBookmarkedArticles();
+      return savedArticles.where((article) => article.bookmarked).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<bool> isArticleBookmarked(Article article) async {
     try {
       final savedArticle = await databaseHelper.getArticleByUrl(article.url);

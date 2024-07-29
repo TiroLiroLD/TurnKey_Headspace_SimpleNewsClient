@@ -102,6 +102,12 @@ class DatabaseHelper {
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
+  Future<List<Article>> getBookmarkedArticles() async {
+    final db = await instance.database;
+    final result = await db.query('articles', where: 'bookmarked = 1');
+    return result.map((json) => Article.fromMap(json)).toList();
+  }
+
   Future<void> setLastUpdateTimestamp(String sourceId, DateTime timestamp) async {
     final db = await instance.database;
     await db.insert(

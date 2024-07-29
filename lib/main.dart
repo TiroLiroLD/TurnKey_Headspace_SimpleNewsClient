@@ -7,7 +7,7 @@ import 'package:simple_news_client/services/news_service_interface.dart';
 import 'helpers/database_helper.dart';
 import 'injection.dart';
 import 'pages/news_search_page.dart';
-import 'pages/saved_articles_page.dart';
+import 'pages/bookmarked_articles_page.dart';
 import 'pages/sources_page.dart';
 
 const MethodChannel platformChannel =
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
       home: NewsSearchPage(),
       routes: {
         '/sources': (context) => SourcesPage(),
-        '/saved-articles': (context) => SavedArticlesPage(),
+        '/saved-articles': (context) => BookmarkedArticlesPage(),
       },
     );
   }

@@ -12,6 +12,8 @@ abstract class INewsService {
 
   Future<bool> isArticleSaved(Article article);
 
+  Future<List<Article>> getBookmarkedArticles();
+
   Future<bool> isArticleBookmarked(Article article);
 
   Future<void> bookmarkArticle(Article article);
