@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import '../models/article.dart';
-import '../models/source.dart';
-import '../services/news_service_interface.dart';
+import '../../models/article.dart';
+import '../../models/source.dart';
+import '../../services/news_service_interface.dart';
 import '../widgets/article_item.dart';
-import '../helpers/database_helper.dart';
+import '../../helpers/database_helper.dart';
 
 class ArticlesBySourcePage extends StatefulWidget {
   final Source source;
 
-  ArticlesBySourcePage({required this.source});
+  const ArticlesBySourcePage({required this.source});
 
   @override
   _ArticlesBySourcePageState createState() => _ArticlesBySourcePageState();
@@ -109,7 +109,7 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'Last updated: ${lastUpdate!.toLocal()}',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 Expanded(

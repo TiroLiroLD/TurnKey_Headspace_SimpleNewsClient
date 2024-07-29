@@ -2,7 +2,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/article.dart';
-import '../models/source.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -72,7 +71,8 @@ class DatabaseHelper {
 
   Future<Article?> getArticleByUrl(String url) async {
     final db = await instance.database;
-    final result = await db.query('articles', where: 'url = ?', whereArgs: [url]);
+    final result =
+        await db.query('articles', where: 'url = ?', whereArgs: [url]);
     if (result.isNotEmpty) {
       return Article.fromMap(result.first);
     }
@@ -98,7 +98,8 @@ class DatabaseHelper {
 
   Future<List<Article>> fetchArticlesBySource(String sourceId) async {
     final db = await instance.database;
-    final result = await db.query('articles', where: 'sourceId = ?', whereArgs: [sourceId]);
+    final result = await db
+        .query('articles', where: 'sourceId = ?', whereArgs: [sourceId]);
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
@@ -108,7 +109,8 @@ class DatabaseHelper {
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
-  Future<void> setLastUpdateTimestamp(String sourceId, DateTime timestamp) async {
+  Future<void> setLastUpdateTimestamp(
+      String sourceId, DateTime timestamp) async {
     final db = await instance.database;
     await db.insert(
       'updates',

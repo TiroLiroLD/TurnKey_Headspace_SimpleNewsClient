@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:simple_news_client/pages/article_details_page.dart';
+import 'package:simple_news_client/presentation/pages/article_details_page.dart';
 
-import '../models/article.dart';
-import '../services/news_service_interface.dart';
+import '../../models/article.dart';
+import '../../services/news_service_interface.dart';
 
 class ArticleItem extends StatefulWidget {
   final Article article;

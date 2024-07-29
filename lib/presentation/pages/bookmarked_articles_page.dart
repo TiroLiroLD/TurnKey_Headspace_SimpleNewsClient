@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../models/article.dart';
-import '../services/news_service_interface.dart';
+
+import '../../models/article.dart';
+import '../../services/news_service_interface.dart';
 import '../widgets/article_list.dart';
 
 class BookmarkedArticlesPage extends StatefulWidget {
@@ -39,12 +40,12 @@ class _BookmarkedArticlesPageState extends State<BookmarkedArticlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Saved Articles'),
+        title: const Text('Saved Articles'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : bookmarkedArticles.isEmpty
-              ? Center(child: Text('No saved articles'))
+              ? const Center(child: Text('No saved articles'))
               : ArticleList(
                   articles: bookmarkedArticles,
                 ),

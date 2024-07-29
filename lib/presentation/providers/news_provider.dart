@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import '../models/source.dart';
-import '../services/news_service_interface.dart';
+import '../../models/source.dart';
+import '../../services/news_service_interface.dart';
 
 @injectable
 class NewsProvider with ChangeNotifier {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:simple_news_client/widgets/article_list.dart';
 
-import '../models/article.dart';
-import '../services/news_service_interface.dart';
+import '../../models/article.dart';
+import '../../services/news_service_interface.dart';
+import '../widgets/article_list.dart';
 
 class NewsSearchPage extends StatefulWidget {
   @override
@@ -214,7 +214,7 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
         title: TextField(
           focusNode: _searchFocusNode,
           controller: _searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Search...',
             border: InputBorder.none,
           ),
@@ -229,7 +229,7 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: _openAdvancedSearch,
           ),
         ],

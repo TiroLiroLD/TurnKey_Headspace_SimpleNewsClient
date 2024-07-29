@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../models/source.dart';
-import '../services/news_service_interface.dart';
+import '../../models/source.dart';
+import '../../services/news_service_interface.dart';
 import 'articles_by_source_page.dart';
 
 class SourcesPage extends StatefulWidget {
@@ -41,10 +41,10 @@ class _SourcesPageState extends State<SourcesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('News Sources'),
+        title: const Text('News Sources'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: sources.length,
         itemBuilder: (context, index) {

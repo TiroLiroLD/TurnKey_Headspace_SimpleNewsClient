@@ -6,9 +6,9 @@ import 'package:simple_news_client/services/news_service_interface.dart';
 
 import 'helpers/database_helper.dart';
 import 'injection.dart';
-import 'pages/news_search_page.dart';
-import 'pages/bookmarked_articles_page.dart';
-import 'pages/sources_page.dart';
+import 'presentation/pages/news_search_page.dart';
+import 'presentation/pages/bookmarked_articles_page.dart';
+import 'presentation/pages/sources_page.dart';
 
 const MethodChannel platformChannel =
     MethodChannel('com.headspace.simple_news_client/background_service');
@@ -25,7 +25,6 @@ Future<void> main() async {
 }
 
 Future<void> _handleMethodCall(MethodCall call) async {
-  print("Method call received: ${call.method}");
   switch (call.method) {
     case 'fetchNews':
       await fetchNews();
