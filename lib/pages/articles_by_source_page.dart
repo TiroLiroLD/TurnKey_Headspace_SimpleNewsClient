@@ -28,9 +28,8 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     super.initState();
     newsService = GetIt.instance<INewsService>();
     databaseHelper = GetIt.instance<DatabaseHelper>();
-    fetchArticlesFromDB();
+    _loadArticles();
     fetchLastUpdate();
-    //fetchArticlesFromAPI();
   }
 
   Future<void> fetchLastUpdate() async {
@@ -40,11 +39,16 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     });
   }
 
-  Future<void> fetchArticlesFromDB() async {
+  Future<void> _loadArticles() async {
     final articlesFromDB = await databaseHelper.fetchArticlesBySource(widget.source.id);
-    setState(() {
-      articles = articlesFromDB;
-    });
+    if (articlesFromDB.isEmpty) {
+      await fetchArticlesFromAPI();
+    } else {
+      setState(() {
+        articles = articlesFromDB;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> fetchArticlesFromAPI() async {
@@ -57,16 +61,24 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     };
 
     try {
-      List<Article> fetchedArticles =
-          await newsService.getArticles(parameters: parameters);
+      List<Article> fetchedArticles = await newsService.getArticles(parameters: parameters);
       setState(() {
         articles = fetchedArticles;
         isLoading = false;
       });
+
       await databaseHelper.setLastUpdateTimestamp(widget.source.id, DateTime.now());
+
       for (var article in fetchedArticles) {
-        await databaseHelper.insertArticle(article);
+        final existingArticle = await databaseHelper.getArticleByUrl(article.url);
+        if (existingArticle != null) {
+          final updatedArticle = article.copyWith(bookmarked: existingArticle.bookmarked);
+          await databaseHelper.updateArticle(updatedArticle);
+        } else {
+          await databaseHelper.insertArticle(article);
+        }
       }
+
       fetchLastUpdate();
     } catch (e) {
       // Handle error
