@@ -89,6 +89,11 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     }
   }
 
+  Future<void> _refreshArticles() async {
+    await fetchArticlesFromAPI();
+    await _loadArticles();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,12 +113,15 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
                     ),
                   ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: articles.length,
-                    itemBuilder: (context, index) {
-                      final article = articles[index];
-                      return ArticleItem(article: article);
-                    },
+                  child: RefreshIndicator(
+                    onRefresh: _refreshArticles,
+                    child: ListView.builder(
+                      itemCount: articles.length,
+                      itemBuilder: (context, index) {
+                        final article = articles[index];
+                        return ArticleItem(article: article);
+                      },
+                    ),
                   ),
                 ),
               ],
