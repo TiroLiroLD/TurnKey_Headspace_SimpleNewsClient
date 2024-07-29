@@ -12,6 +12,7 @@ class Article {
   final String? urlToImage;
   final DateTime? publishedAt;
   final String? content;
+  final bool bookmarked;
 
   Article({
     this.source,
@@ -22,6 +23,7 @@ class Article {
     this.urlToImage,
     this.publishedAt,
     this.content,
+    this.bookmarked = false,
   });
 
   factory Article.fromJson(Map<String, dynamic> json) => _$ArticleFromJson(json);
@@ -40,6 +42,7 @@ class Article {
       'urlToImage': urlToImage,
       'publishedAt': publishedAt?.toIso8601String(),
       'content': content,
+      'bookmarked': bookmarked ? 1 : 0,
     };
   }
 
@@ -56,6 +59,31 @@ class Article {
       urlToImage: map['urlToImage'],
       publishedAt: map['publishedAt'] != null ? DateTime.parse(map['publishedAt']) : null,
       content: map['content'],
+      bookmarked: map['bookmarked'] == 1,
+    );
+  }
+
+  Article copyWith({
+    ArticleSource? source,
+    String? author,
+    String? title,
+    String? description,
+    String? url,
+    String? urlToImage,
+    DateTime? publishedAt,
+    String? content,
+    bool? bookmarked,
+  }) {
+    return Article(
+      source: source ?? this.source,
+      author: author ?? this.author,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      url: url ?? this.url,
+      urlToImage: urlToImage ?? this.urlToImage,
+      publishedAt: publishedAt ?? this.publishedAt,
+      content: content ?? this.content,
+      bookmarked: bookmarked ?? this.bookmarked,
     );
   }
 }

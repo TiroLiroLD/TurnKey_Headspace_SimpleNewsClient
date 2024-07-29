@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
+import 'package:simple_news_client/services/news_service_interface.dart';
 
+import 'helpers/database_helper.dart';
 import 'injection.dart';
 import 'pages/news_search_page.dart';
 import 'pages/saved_articles_page.dart';
 import 'pages/sources_page.dart';
-import 'services/background_service.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+const MethodChannel platformChannel =
+    MethodChannel('com.headspace.simple_news_client/background_service');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,10 +19,56 @@ Future<void> main() async {
   configureDependencies();
   await GetIt.instance.allReady();
 
-  // Start the background service when the app launches
-  await BackgroundService.startService();
+  platformChannel.setMethodCallHandler(_handleMethodCall);
 
   runApp(MyApp());
+}
+
+Future<void> _handleMethodCall(MethodCall call) async {
+  print("Method call received: ${call.method}");
+  switch (call.method) {
+    case 'fetchNews':
+      await fetchNews();
+      break;
+    default:
+      print('Method not implemented');
+  }
+}
+
+Future<void> fetchNews() async {
+  print("Fetching news...");
+  final newsService = GetIt.instance<INewsService>();
+
+  final sources = [
+    'abc-news',
+    'abc-news-au',
+    'aftenposten',
+    'al-jazeera-english',
+    'ansa'
+  ];
+  final parameters = {
+    'sources': sources.join(','),
+  };
+
+  final articles = await newsService.getArticles(parameters: parameters);
+
+  for (var article in articles) {
+    final existingArticle =
+        await DatabaseHelper.instance.getArticleByUrl(article.url);
+
+    if (existingArticle != null) {
+      final updatedArticle =
+          article.copyWith(bookmarked: existingArticle.bookmarked);
+      await DatabaseHelper.instance.updateArticle(updatedArticle);
+    } else {
+      await DatabaseHelper.instance.insertArticle(article);
+    }
+  }
+
+  for (var source in sources) {
+    await DatabaseHelper.instance
+        .setLastUpdateTimestamp(source, DateTime.now());
+  }
 }
 
 class MyApp extends StatelessWidget {

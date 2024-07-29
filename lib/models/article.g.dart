@@ -19,6 +19,7 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
           ? null
           : DateTime.parse(json['publishedAt'] as String),
       content: json['content'] as String?,
+      bookmarked: json['bookmarked'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
@@ -30,6 +31,7 @@ Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
       'urlToImage': instance.urlToImage,
       'publishedAt': instance.publishedAt?.toIso8601String(),
       'content': instance.content,
+      'bookmarked': instance.bookmarked,
     };
 
 ArticleSource _$ArticleSourceFromJson(Map<String, dynamic> json) =>

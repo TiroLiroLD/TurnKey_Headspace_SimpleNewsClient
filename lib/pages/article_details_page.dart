@@ -16,25 +16,27 @@ class ArticleDetailsPage extends StatefulWidget {
 
 class _ArticleDetailsPageState extends State<ArticleDetailsPage> {
   late INewsService newsService;
-  bool isSaved = false;
+  bool isBookmarked = false;
 
   @override
   void initState() {
     super.initState();
     newsService = GetIt.instance<INewsService>();
-    checkIfArticleIsSaved();
+    checkIfArticleIsBookmarked();
   }
 
-  Future<void> checkIfArticleIsSaved() async {
-    final saved = await newsService.isArticleSaved(widget.article);
+  Future<void> checkIfArticleIsBookmarked() async {
+    final bookmarked = await newsService.isArticleBookmarked(widget.article);
     setState(() {
-      isSaved = saved;
+      isBookmarked = bookmarked;
     });
   }
 
   Future<void> toggleSaveArticle() async {
     widget.toggleSaveArticle();
-    checkIfArticleIsSaved();
+    setState(() {
+      isBookmarked = !isBookmarked;
+    });
   }
 
   @override
@@ -45,8 +47,8 @@ class _ArticleDetailsPageState extends State<ArticleDetailsPage> {
         actions: [
           IconButton(
             icon: Icon(
-              isSaved ? Icons.bookmark : Icons.bookmark_border,
-              color: isSaved ? Colors.red : null,
+              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: isBookmarked ? Colors.red : null,
             ),
             onPressed: toggleSaveArticle,
           ),

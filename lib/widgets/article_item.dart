@@ -26,7 +26,7 @@ class _ArticleItemState extends State<ArticleItem> {
   }
 
   Future<void> checkIfArticleIsSaved() async {
-    final saved = await newsService.isArticleSaved(widget.article);
+    final saved = await newsService.isArticleBookmarked(widget.article);
     setState(() {
       isSaved = saved;
     });
@@ -34,9 +34,9 @@ class _ArticleItemState extends State<ArticleItem> {
 
   Future<void> toggleSaveArticle() async {
     if (isSaved) {
-      await newsService.removeArticle(widget.article.url);
+      await newsService.unbookmarkArticle(widget.article);
     } else {
-      await newsService.saveArticle(widget.article);
+      await newsService.bookmarkArticle(widget.article);
     }
     checkIfArticleIsSaved();
   }
