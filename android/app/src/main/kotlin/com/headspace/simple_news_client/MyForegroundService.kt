@@ -11,16 +11,17 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
+import android.util.Log
 
 class MyForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
         startForegroundService()
+        FlutterEngineManager.initialize(this) // Initialize Flutter Engine
         scheduleWork()
     }
 
@@ -51,16 +52,18 @@ class MyForegroundService : Service() {
     }
 
     private fun scheduleWork() {
-        val workRequest = PeriodicWorkRequestBuilder<MyWorker>(30, TimeUnit.SECONDS)
+        val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
+            .setInitialDelay(3, TimeUnit.SECONDS)
             .build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "MyUniqueWorker",
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
+        WorkManager.getInstance(this).enqueue(workRequest)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FlutterEngineManager.destroy()
     }
 }
