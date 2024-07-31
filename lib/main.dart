@@ -30,9 +30,8 @@ Future<void> _handleMethodCall(MethodCall call) async {
     case 'fetchNews':
       await fetchNews();
       break;
-    case 'pong':
-      print("pong received from iOS");
-      _sendPingToIOS();
+    case 'iosFetchNews':
+      _sendScheduleFetchToIOS();
       await fetchNews();
       break;
     default:
@@ -40,18 +39,17 @@ Future<void> _handleMethodCall(MethodCall call) async {
   }
 }
 
-Future<void> _sendPingToIOS() async {
+Future<void> _sendScheduleFetchToIOS() async {
   try {
-    final String result = await platformChannel.invokeMethod('ping');
-    print("ping sent to iOS: $result");
+    final String result = await platformChannel.invokeMethod('scheduleFetch');
+    print("scheduleFetch sent to iOS: $result");
   } on PlatformException catch (e) {
-    print("Failed to send ping to iOS: '${e.message}'.");
+    print("Failed to send scheduleFetch to iOS: '${e.message}'.");
   }
 }
 
 Future<void> _initPlatformState() async {
-  // Start the ping-pong by sending the first ping
-  _sendPingToIOS();
+  _sendScheduleFetchToIOS();
 }
 
 Future<void> fetchNews() async {

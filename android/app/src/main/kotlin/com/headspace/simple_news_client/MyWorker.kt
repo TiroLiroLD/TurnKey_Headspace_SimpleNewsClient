@@ -35,7 +35,7 @@ class MyWorker(appContext: Context, workerParams: WorkerParameters) : Worker(app
 
         // Reschedule the work
         val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
-            .setInitialDelay(20, TimeUnit.MINUTES)
+            .setInitialDelay(1, TimeUnit.MINUTES)
             .build()
         WorkManager.getInstance(applicationContext).enqueue(workRequest)
 

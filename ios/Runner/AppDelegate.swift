@@ -16,7 +16,6 @@ import UIKit
 
         // Set up background fetch
         application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-        print("Background fetch interval set to minimum")
 
         // Set the method call handler
         methodChannel?.setMethodCallHandler(handle)
@@ -25,10 +24,10 @@ import UIKit
     }
 
     private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if call.method == "ping" {
-            print("ping received from Flutter")
+        if call.method == "scheduleFetch" {
+            print("scheduleFetch received from Flutter")
             self.scheduleFetchNews()
-            result("pong")
+            result("iosFetchNews")
         } else {
             result(FlutterMethodNotImplemented)
         }
@@ -45,22 +44,11 @@ import UIKit
         })
 
         // Schedule the next call to this method
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 60) { //30 seconds
             self.scheduleFetchNews()
         }
     }
 
-    func sendPongToFlutter() {
-        methodChannel?.invokeMethod("pong", arguments: nil, result: { (result) in
-            if let error = result as? FlutterError {
-                print("Error invoking pong method: \(error)")
-            } else {
-                print("pong sent to Flutter")
-            }
-        })
-    }
-
-    // Add this function to handle background fetch
     override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         methodChannel?.invokeMethod("fetchNews", arguments: nil, result: { (result) in
             if let error = result as? FlutterError {
