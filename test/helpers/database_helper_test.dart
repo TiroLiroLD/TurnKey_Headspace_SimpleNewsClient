@@ -245,7 +245,7 @@ void main() {
   });
 
   test('Set and get last update timestamp', () async {
-    final sourceId = '1';
+    const sourceId = '1';
     final timestamp = DateTime.now();
 
     await databaseHelper.setLastUpdateTimestamp(sourceId, timestamp);
@@ -258,7 +258,7 @@ void main() {
 
     // Clean up
     final db = await databaseHelper.database;
-    await db.delete('update_timestamps',
+    await db.delete('updates',
         where: 'sourceId = ?', whereArgs: [sourceId]);
   });
 }

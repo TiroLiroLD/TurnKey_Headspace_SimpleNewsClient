@@ -1,6 +1,5 @@
 import 'package:injectable/injectable.dart';
 
-import '../helpers/database_helper.dart';
 import '../helpers/database_helper_interface.dart';
 import '../models/article.dart';
 import '../models/source.dart';
@@ -107,5 +106,4 @@ class NewsService implements INewsService {
       rethrow;
     }
   }
-
 }

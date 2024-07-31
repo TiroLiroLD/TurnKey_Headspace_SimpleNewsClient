@@ -6,8 +6,8 @@ import 'package:simple_news_client/services/news_service_interface.dart';
 
 import 'helpers/database_helper.dart';
 import 'injection.dart';
-import 'presentation/pages/news_search_page.dart';
 import 'presentation/pages/bookmarked_articles_page.dart';
+import 'presentation/pages/news_search_page.dart';
 import 'presentation/pages/sources_page.dart';
 
 const MethodChannel platformChannel =
@@ -22,6 +22,7 @@ Future<void> main() async {
   platformChannel.setMethodCallHandler(_handleMethodCall);
 
   runApp(MyApp());
+  _initPlatformState();
 }
 
 Future<void> _handleMethodCall(MethodCall call) async {
@@ -29,9 +30,28 @@ Future<void> _handleMethodCall(MethodCall call) async {
     case 'fetchNews':
       await fetchNews();
       break;
+    case 'pong':
+      print("pong received from iOS");
+      _sendPingToIOS();
+      await fetchNews();
+      break;
     default:
       print('Method not implemented');
   }
+}
+
+Future<void> _sendPingToIOS() async {
+  try {
+    final String result = await platformChannel.invokeMethod('ping');
+    print("ping sent to iOS: $result");
+  } on PlatformException catch (e) {
+    print("Failed to send ping to iOS: '${e.message}'.");
+  }
+}
+
+Future<void> _initPlatformState() async {
+  // Start the ping-pong by sending the first ping
+  _sendPingToIOS();
 }
 
 Future<void> fetchNews() async {

@@ -5,7 +5,6 @@ import '../../helpers/database_helper_interface.dart';
 import '../../models/article.dart';
 import '../../models/source.dart';
 import '../../services/news_service_interface.dart';
-import '../widgets/article_item.dart';
 import '../widgets/article_list.dart';
 
 class ArticlesBySourcePage extends StatefulWidget {
@@ -34,14 +33,16 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
   }
 
   Future<void> fetchLastUpdate() async {
-    final lastUpdateTimestamp = await databaseHelper.getLastUpdateTimestamp(widget.source.id);
+    final lastUpdateTimestamp =
+        await databaseHelper.getLastUpdateTimestamp(widget.source.id);
     setState(() {
       lastUpdate = lastUpdateTimestamp;
     });
   }
 
   Future<void> _loadArticles() async {
-    final articlesFromDB = await databaseHelper.fetchArticlesBySource(widget.source.id);
+    final articlesFromDB =
+        await databaseHelper.fetchArticlesBySource(widget.source.id);
     if (articlesFromDB.isEmpty) {
       await fetchArticlesFromAPI();
     } else {
@@ -62,18 +63,22 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
     };
 
     try {
-      List<Article> fetchedArticles = await newsService.getArticles(parameters: parameters);
+      List<Article> fetchedArticles =
+          await newsService.getArticles(parameters: parameters);
       setState(() {
         articles = fetchedArticles;
         isLoading = false;
       });
 
-      await databaseHelper.setLastUpdateTimestamp(widget.source.id, DateTime.now());
+      await databaseHelper.setLastUpdateTimestamp(
+          widget.source.id, DateTime.now());
 
       for (var article in fetchedArticles) {
-        final existingArticle = await databaseHelper.getArticleByUrl(article.url);
+        final existingArticle =
+            await databaseHelper.getArticleByUrl(article.url);
         if (existingArticle != null) {
-          final updatedArticle = article.copyWith(bookmarked: existingArticle.bookmarked);
+          final updatedArticle =
+              article.copyWith(bookmarked: existingArticle.bookmarked);
           await databaseHelper.updateArticle(updatedArticle);
         } else {
           await databaseHelper.insertArticle(article);
@@ -110,7 +115,8 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'Last updated: ${lastUpdate!.toLocal()}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 Expanded(

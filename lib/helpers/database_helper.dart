@@ -144,5 +144,4 @@ class DatabaseHelper implements IDatabaseHelper {
     }
     return null;
   }
-
 }

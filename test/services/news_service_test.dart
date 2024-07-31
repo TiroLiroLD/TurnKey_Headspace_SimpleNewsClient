@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:simple_news_client/helpers/database_helper.dart';
 import 'package:simple_news_client/helpers/database_helper_interface.dart';
 import 'package:simple_news_client/models/article.dart';
 import 'package:simple_news_client/models/source.dart';
@@ -46,7 +45,8 @@ void main() {
       final result = await newsService.getArticles(parameters: parameters);
 
       expect(result, articles);
-      verify(mockNewsRepository.fetchArticles(parameters: parameters)).called(1);
+      verify(mockNewsRepository.fetchArticles(parameters: parameters))
+          .called(1);
       // Verify that insertArticle is never called since getArticles does not save articles to DB
       verifyNever(mockDatabaseHelper.insertArticle(any));
     });
@@ -73,8 +73,7 @@ void main() {
           country: 'us',
         ),
       ];
-      when(mockNewsRepository.fetchSources())
-          .thenAnswer((_) async => sources);
+      when(mockNewsRepository.fetchSources()).thenAnswer((_) async => sources);
 
       final result = await newsService.getSources();
 
@@ -103,8 +102,7 @@ void main() {
 
     test('should remove an article', () async {
       const url = 'https://example.com/1';
-      when(mockDatabaseHelper.deleteArticle(url))
-          .thenAnswer((_) async => 1);
+      when(mockDatabaseHelper.deleteArticle(url)).thenAnswer((_) async => 1);
 
       await newsService.removeArticle(url);
 
@@ -192,15 +190,14 @@ void main() {
 
       when(mockDatabaseHelper.getArticleByUrl(article.url))
           .thenAnswer((_) async => article);
-      when(mockDatabaseHelper.updateArticle(any))
-          .thenAnswer((_) async => 1);
+      when(mockDatabaseHelper.updateArticle(any)).thenAnswer((_) async => 1);
 
       await newsService.bookmarkArticle(article);
 
       verify(mockDatabaseHelper.getArticleByUrl(article.url)).called(1);
       verify(mockDatabaseHelper.updateArticle(argThat(
         predicate<Article>((a) =>
-        a.url == article.url &&
+            a.url == article.url &&
             a.bookmarked == true &&
             a.author == article.author &&
             a.title == article.title &&
@@ -223,15 +220,14 @@ void main() {
 
       when(mockDatabaseHelper.getArticleByUrl(article.url))
           .thenAnswer((_) async => article);
-      when(mockDatabaseHelper.updateArticle(any))
-          .thenAnswer((_) async => 1);
+      when(mockDatabaseHelper.updateArticle(any)).thenAnswer((_) async => 1);
 
       await newsService.unbookmarkArticle(article);
 
       verify(mockDatabaseHelper.getArticleByUrl(article.url)).called(1);
       verify(mockDatabaseHelper.updateArticle(argThat(
         predicate<Article>((a) =>
-        a.url == article.url &&
+            a.url == article.url &&
             a.bookmarked == false &&
             a.author == article.author &&
             a.title == article.title &&

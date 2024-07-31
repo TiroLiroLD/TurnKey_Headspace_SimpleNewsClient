@@ -3,11 +3,73 @@ import UIKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
+    private var methodChannel: FlutterMethodChannel?
+
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+        methodChannel = FlutterMethodChannel(name: "com.headspace.simple_news_client/background_service", binaryMessenger: controller.binaryMessenger)
+
+        GeneratedPluginRegistrant.register(with: self)
+
+        // Set up background fetch
+        application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+        print("Background fetch interval set to minimum")
+
+        // Set the method call handler
+        methodChannel?.setMethodCallHandler(handle)
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+
+    private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if call.method == "ping" {
+            print("ping received from Flutter")
+            self.scheduleFetchNews()
+            result("pong")
+        } else {
+            result(FlutterMethodNotImplemented)
+        }
+    }
+
+    private func scheduleFetchNews() {
+        // Send a message to Flutter to fetch news
+        methodChannel?.invokeMethod("fetchNews", arguments: nil, result: { (result) in
+            if let error = result as? FlutterError {
+                print("Error invoking fetchNews method: \(error)")
+            } else {
+                print("fetchNews invoked from scheduleFetchNews")
+            }
+        })
+
+        // Schedule the next call to this method
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.scheduleFetchNews()
+        }
+    }
+
+    func sendPongToFlutter() {
+        methodChannel?.invokeMethod("pong", arguments: nil, result: { (result) in
+            if let error = result as? FlutterError {
+                print("Error invoking pong method: \(error)")
+            } else {
+                print("pong sent to Flutter")
+            }
+        })
+    }
+
+    // Add this function to handle background fetch
+    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        methodChannel?.invokeMethod("fetchNews", arguments: nil, result: { (result) in
+            if let error = result as? FlutterError {
+                print("Error invoking fetchNews method: \(error)")
+                completionHandler(.failed)
+            } else {
+                print("fetchNews invoked from background fetch")
+                completionHandler(.newData)
+            }
+        })
+    }
 }

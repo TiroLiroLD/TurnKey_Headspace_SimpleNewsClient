@@ -35,7 +35,7 @@ void main() {
       (WidgetTester tester) async {
     // Arrange
     when(getIt<INewsService>().getSources())
-        .thenAnswer((_) async => Future.delayed(Duration(seconds: 1)));
+        .thenAnswer((_) async => Future.delayed(const Duration(seconds: 1)));
 
     // Act
     await tester.pumpWidget(MaterialApp(
