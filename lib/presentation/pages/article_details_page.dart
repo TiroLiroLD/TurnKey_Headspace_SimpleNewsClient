@@ -71,22 +71,11 @@ class _ArticleDetailsPageState extends State<ArticleDetailsPage> {
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
-              widget.article.urlToImage != null
-                  ? Image.network(widget.article.urlToImage!)
-                  : Container(),
-              const SizedBox(height: 16),
               Text(widget.article.content ?? 'No content available',
                   style: const TextStyle(fontSize: 18)),
               const SizedBox(height: 16),
               Text('Published at: ${widget.article.publishedAt}',
                   style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  //TODO Open the article URL in a WebView
-                },
-                child: const Text('Read Full Article'),
-              ),
             ],
           ),
         ),

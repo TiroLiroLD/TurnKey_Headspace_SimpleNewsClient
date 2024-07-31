@@ -2,22 +2,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:simple_news_client/helpers/database_helper.dart';
+import 'package:simple_news_client/helpers/database_helper_interface.dart';
 import 'package:simple_news_client/models/article.dart';
 import 'package:simple_news_client/models/source.dart';
 import 'package:simple_news_client/repositories/news_repository_interface.dart';
 import 'package:simple_news_client/services/news_service.dart';
 
-@GenerateMocks([INewsRepository, DatabaseHelper])
+@GenerateMocks([INewsRepository, IDatabaseHelper])
 import 'news_service_test.mocks.dart';
 
 void main() {
   late NewsService newsService;
   late MockINewsRepository mockNewsRepository;
-  late MockDatabaseHelper mockDatabaseHelper;
+  late MockIDatabaseHelper mockDatabaseHelper;
 
   setUp(() {
     mockNewsRepository = MockINewsRepository();
-    mockDatabaseHelper = MockDatabaseHelper();
+    mockDatabaseHelper = MockIDatabaseHelper();
     newsService = NewsService(
       newsRepository: mockNewsRepository,
       databaseHelper: mockDatabaseHelper,

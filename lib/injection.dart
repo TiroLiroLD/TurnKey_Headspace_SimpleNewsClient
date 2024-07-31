@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import 'helpers/database_helper.dart';
+import 'helpers/database_helper_interface.dart';
 import 'injection.config.dart';
 
 final getIt = GetIt.instance;
@@ -18,6 +19,6 @@ void configureDependencies() {
   getIt.registerSingleton<String>('https://newsapi.org/v2',
       instanceName: 'baseUrl'); // Registering baseUrl with a name
 
-  getIt.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper.instance);
+  getIt.registerLazySingleton<IDatabaseHelper>(() => DatabaseHelper());
   getIt.init();
 }

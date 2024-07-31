@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../helpers/database_helper_interface.dart';
 import '../../models/article.dart';
 import '../../models/source.dart';
 import '../../services/news_service_interface.dart';
 import '../widgets/article_item.dart';
-import '../../helpers/database_helper.dart';
+import '../widgets/article_list.dart';
 
 class ArticlesBySourcePage extends StatefulWidget {
   final Source source;
@@ -18,7 +19,7 @@ class ArticlesBySourcePage extends StatefulWidget {
 
 class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
   late INewsService newsService;
-  late DatabaseHelper databaseHelper;
+  late IDatabaseHelper databaseHelper;
   List<Article> articles = [];
   bool isLoading = true;
   DateTime? lastUpdate;
@@ -27,7 +28,7 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
   void initState() {
     super.initState();
     newsService = GetIt.instance<INewsService>();
-    databaseHelper = GetIt.instance<DatabaseHelper>();
+    databaseHelper = GetIt.instance<IDatabaseHelper>();
     _loadArticles();
     fetchLastUpdate();
   }
@@ -115,13 +116,7 @@ class _ArticlesBySourcePageState extends State<ArticlesBySourcePage> {
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: _refreshArticles,
-                    child: ListView.builder(
-                      itemCount: articles.length,
-                      itemBuilder: (context, index) {
-                        final article = articles[index];
-                        return ArticleItem(article: article);
-                      },
-                    ),
+                    child: ArticleList(articles: articles),
                   ),
                 ),
               ],

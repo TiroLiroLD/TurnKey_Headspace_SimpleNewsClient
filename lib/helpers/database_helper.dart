@@ -2,8 +2,11 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/article.dart';
+import 'database_helper_interface.dart';
 
-class DatabaseHelper {
+class DatabaseHelper implements IDatabaseHelper {
+  DatabaseHelper();
+
   static final DatabaseHelper instance = DatabaseHelper._init();
 
   static Database? _database;
@@ -54,11 +57,13 @@ class DatabaseHelper {
     ''');
   }
 
+  @override
   Future<void> insertArticle(Article article) async {
     final db = await instance.database;
     await db.insert('articles', article.toMap());
   }
 
+  @override
   Future<void> updateArticle(Article article) async {
     final db = await instance.database;
     await db.update(
@@ -69,6 +74,7 @@ class DatabaseHelper {
     );
   }
 
+  @override
   Future<Article?> getArticleByUrl(String url) async {
     final db = await instance.database;
     final result =
@@ -79,23 +85,27 @@ class DatabaseHelper {
     return null;
   }
 
+  @override
   Future<void> deleteArticle(String url) async {
     final db = await instance.database;
     await db.delete('articles', where: 'url = ?', whereArgs: [url]);
   }
 
+  @override
   Future<List<Article>> fetchSavedArticles() async {
     final db = await instance.database;
     final result = await db.query('articles');
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
+  @override
   Future<List<Article>> fetchSavedArticlesOrderedByDate() async {
     final db = await instance.database;
     final result = await db.query('articles', orderBy: 'publishedAt DESC');
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
+  @override
   Future<List<Article>> fetchArticlesBySource(String sourceId) async {
     final db = await instance.database;
     final result = await db
@@ -103,12 +113,14 @@ class DatabaseHelper {
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
+  @override
   Future<List<Article>> getBookmarkedArticles() async {
     final db = await instance.database;
     final result = await db.query('articles', where: 'bookmarked = 1');
     return result.map((json) => Article.fromMap(json)).toList();
   }
 
+  @override
   Future<void> setLastUpdateTimestamp(
       String sourceId, DateTime timestamp) async {
     final db = await instance.database;
@@ -119,6 +131,7 @@ class DatabaseHelper {
     );
   }
 
+  @override
   Future<DateTime?> getLastUpdateTimestamp(String sourceId) async {
     final db = await instance.database;
     final result = await db.query(
@@ -131,4 +144,5 @@ class DatabaseHelper {
     }
     return null;
   }
+
 }

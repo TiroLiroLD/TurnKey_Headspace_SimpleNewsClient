@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../helpers/database_helper.dart';
+import '../helpers/database_helper_interface.dart';
 import '../models/article.dart';
 import '../models/source.dart';
 import '../repositories/news_repository_interface.dart';
@@ -9,7 +10,7 @@ import 'news_service_interface.dart';
 @Injectable(as: INewsService)
 class NewsService implements INewsService {
   final INewsRepository newsRepository;
-  final DatabaseHelper databaseHelper;
+  final IDatabaseHelper databaseHelper;
 
   NewsService({required this.newsRepository, required this.databaseHelper});
 
